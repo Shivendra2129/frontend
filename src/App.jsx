@@ -6,6 +6,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 
 import { AuthProvider } from "./context/AuthContext";
+import { CartProvider } from "./context/CartContext";
 import Navbar from "./components/Navbar";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Home from "./pages/Home";
@@ -17,12 +18,14 @@ import Orders from "./pages/Orders";
 import FarmerOrders from "./pages/FarmerOrders";
 import Reviews from "./pages/Reviews";
 import AdminDashboard from "./pages/AdminDashboard";
+import EditProduct from "./pages/EditProduct";
 import NotFound from "./pages/NotFound";
 
 function App() {
   return (
     <AuthProvider>
-      <Router>
+      <CartProvider>
+        <Router>
         <Navbar />
         <div className="container mt-4">
           <Routes>
@@ -37,6 +40,15 @@ function App() {
               element={
                 <ProtectedRoute allowedRoles={["farmer"]}>
                   <AddProduct />
+                </ProtectedRoute>
+              }
+            />
+
+            <Route
+              path="/edit-product/:id"
+              element={
+                <ProtectedRoute allowedRoles={["farmer", "admin"]}>
+                  <EditProduct />
                 </ProtectedRoute>
               }
             />
@@ -72,7 +84,8 @@ function App() {
           </Routes>
         </div>
         <ToastContainer position="top-right" />
-      </Router>
+        </Router>
+      </CartProvider>
     </AuthProvider>
   );
 }

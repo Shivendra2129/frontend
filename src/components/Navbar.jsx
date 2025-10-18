@@ -1,11 +1,16 @@
 // src/components/Navbar.jsx
 import { Link, useNavigate } from "react-router-dom";
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { AuthContext } from "../context/AuthContext";
+import { useCart } from "../context/CartContext";
+import Cart from "./Cart";
+import "./Cart.css";
 
 export default function Navbar() {
   const { user, logout } = useContext(AuthContext);
+  const { getTotalItems } = useCart();
   const navigate = useNavigate();
+  const [isCartOpen, setIsCartOpen] = useState(false);
 
   const handleLogout = () => {
     logout();
@@ -33,6 +38,22 @@ export default function Navbar() {
         </ul>
 
         <ul className="navbar-nav">
+          {user && (
+            <li className="nav-item">
+              <button 
+                className="btn btn-outline-primary position-relative"
+                onClick={() => setIsCartOpen(true)}
+              >
+                🛒 Cart
+                {getTotalItems() > 0 && (
+                  <span className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                    {getTotalItems()}
+                  </span>
+                )}
+              </button>
+            </li>
+          )}
+          
           {!user ? (
             <>
               <li className="nav-item"><Link className="nav-link" to="/login">Login</Link></li>
@@ -48,6 +69,8 @@ export default function Navbar() {
           )}
         </ul>
       </div>
+      
+      <Cart isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} />
     </nav>
   );
 }

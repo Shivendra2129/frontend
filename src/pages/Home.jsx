@@ -1,10 +1,15 @@
 // src/pages/Home.jsx
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
 import API from "../api/axiosConfig";
 import { Link } from "react-router-dom";
+import { AuthContext } from "../context/AuthContext";
+import { useCart } from "../context/CartContext";
+import { toast } from "react-toastify";
 
 export default function Home() {
   const [featured, setFeatured] = useState([]);
+  const { user } = useContext(AuthContext);
+  const { addToCart } = useCart();
 
   useEffect(() => {
     API.get("/products")
@@ -34,9 +39,31 @@ export default function Home() {
               <div className="card-body d-flex flex-column">
                 <h5 className="card-title">{p.name}</h5>
                 <p className="card-text text-truncate">{p.description || "No description provided."}</p>
-                <div className="mt-auto d-flex justify-content-between align-items-center">
-                  <strong>₹{p.price}</strong>
-                  <Link to={`/reviews/${p._id}`} className="btn btn-outline-primary btn-sm">Reviews</Link>
+                <div className="mt-auto">
+                  <div className="d-flex justify-content-between align-items-center mb-2">
+                    <strong className="text-primary">₹{p.price} / kg</strong>
+                    {p.stock > 0 ? (
+                      <span className="badge bg-success">In Stock</span>
+                    ) : (
+                      <span className="badge bg-danger">Out of Stock</span>
+                    )}
+                  </div>
+                  <div className="d-flex gap-1">
+                    <Link to={`/reviews/${p._id}`} className="btn btn-outline-primary btn-sm">
+                      Reviews
+                    </Link>
+                    {user && p.stock > 0 && (
+                      <button 
+                        className="btn btn-outline-success btn-sm"
+                        onClick={() => {
+                          addToCart(p, 1);
+                          toast.success("Added to cart!");
+                        }}
+                      >
+                        Add to Cart
+                      </button>
+                    )}
+                  </div>
                 </div>
               </div>
             </div>
