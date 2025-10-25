@@ -1,13 +1,16 @@
 // src/App.jsx
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'react-toastify/dist/ReactToastify.css';
+import './App.css';
 
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 
 import { AuthProvider } from "./context/AuthContext";
 import { CartProvider } from "./context/CartContext";
+import { ThemeProvider } from "./context/ThemeContext";
 import Navbar from "./components/Navbar";
+import ScrollToTop from "./components/ScrollToTop";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
@@ -23,11 +26,12 @@ import NotFound from "./pages/NotFound";
 
 function App() {
   return (
-    <AuthProvider>
-      <CartProvider>
-        <Router>
+    <ThemeProvider>
+      <AuthProvider>
+        <CartProvider>
+          <Router>
         <Navbar />
-        <div className="container mt-4">
+        <div className="main-content">
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/login" element={<Login />} />
@@ -83,10 +87,12 @@ function App() {
             <Route path="*" element={<NotFound />} />
           </Routes>
         </div>
+        <ScrollToTop />
         <ToastContainer position="top-right" />
         </Router>
-      </CartProvider>
-    </AuthProvider>
+        </CartProvider>
+      </AuthProvider>
+    </ThemeProvider>
   );
 }
 
